@@ -148,7 +148,15 @@ public extension UICollectionView {
         }
 
         for changeset in stagedChangeset {
-            if let interrupt = interrupt, interrupt(changeset), let data = stagedChangeset.last?.data {
+			//VK {{ iOS 11 crash fix https://github.com/weakfl/DifferenceKit/commit/ba6dd1018ffc64bea50110665ca080aadf0d6a90
+            if #available(iOS 12.0, *) {
+                if let interrupt = interrupt, interrupt(changeset), let data = stagedChangeset.last?.data {
+                    setData(data)
+                    return reloadData()
+                }
+            } else if let data = stagedChangeset.last?.data {
+            //if let interrupt = interrupt, interrupt(changeset), let data = stagedChangeset.last?.data {
+			//VK }}
                 setData(data)
                 return reloadData()
             }
